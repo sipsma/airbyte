@@ -261,16 +261,14 @@ def with_dockerd_service(
     Returns:
         Container: The container running dockerd as a service.
     """
-    docker_lib_volume_name = f"{slugify(context.connector.technical_name)}-docker-lib"
-    if docker_service_name:
-        docker_lib_volume_name = f"{docker_lib_volume_name}-{slugify(docker_service_name)}"
+    docker_lib_volume_name = "docker-lib"
     dind = (
         context.dagger_client.container()
         .from_("docker:23.0.1-dind")
         .with_mounted_cache(
             "/var/lib/docker",
             context.dagger_client.cache_volume(docker_lib_volume_name),
-            sharing=CacheSharingMode.SHARED,
+            sharing=CacheSharingMode.PRIVATE,
         )
     )
     if shared_volume is not None:
